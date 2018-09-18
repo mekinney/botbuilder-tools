@@ -19,7 +19,9 @@ if (args == '-v' || args == '--version') {
 }
 
 try {
+    process.stdout.write('\n[DispacthTool] Calling netcore DLL\n');
     require('child_process').execSync('dotnet "' + __dirname + '/netcoreapp2.1/Dispatch.dll" ' + args, { stdio: [0, 1, 2] });
+    process.stdout.write('\n[DispacthTool] End of calling netcore DLL\n');
 } catch (err) {
     return 0;
 }
