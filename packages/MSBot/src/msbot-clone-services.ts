@@ -15,14 +15,12 @@ import * as url from 'url';
 import * as util from 'util';
 import { spawnAsync } from './processUtils';
 import { logAsync } from './stdioAsync';
-import { luisRegions, regionToAppInsightLongRegionMap, regionToLuisAuthoringRegionMap, regionToLuisPublishRegionMap, regionToSearchRegionMap, showMessage } from './utils';
+import { luisRegions, regionToAppInsightLongRegionMap, regionToLuisAuthoringRegionMap, regionToLuisPublishRegionMap, regionToSearchRegionMap } from './utils';
 const Table = require('cli-table3');
 const opn = require('opn');
 const exec = util.promisify(child_process.exec);
 
 const AZMINVERSION = '(0.4.1)';
-
-require('log-prefix')(() => showMessage('%s'));
 
 program.Command.prototype.unknownOption = (flag: string): void => {
     console.error(chalk.default.redBright(`Unknown arguments: ${flag}`));
@@ -63,6 +61,7 @@ program
     .option('--groupName <groupName>', '(OPTIONAL) groupName for cloned bot, if not passed then new bot name will be used for the new group')
     .option('--sdkLanguage <sdkLanguage>', '(OPTIONAL) language for bot [Csharp|Node] (Default:CSharp)')
     .option('--sdkVersion <sdkVersion>', '(OPTIONAL) SDK version for bot [v3|v4] (Default:v4)')
+    .option('--prefix', 'Append [msbot] prefix to all messages')    
     .option('-q, --quiet', 'disable questions')
     .description('allows you to clone all of the services a bot into a new azure resource group')
     .action((cmd: program.Command, actions: program.Command) => undefined);
@@ -70,7 +69,6 @@ program
 const cmd: program.Command = program.parse(process.argv);
 const args = <ICloneArgs>{};
 Object.assign(args, cmd);
-args.verbose = process.env.VERBOSE === 'verbose';
 
 if (typeof (args.name) != 'string') {
     console.error(chalk.default.redBright('missing --name argument'));
